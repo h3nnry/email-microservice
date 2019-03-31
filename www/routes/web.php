@@ -14,3 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => '/email'], function () use ($router) {
+    $router->post('/', 'EmailController@post');
+    $router->get('{id:[0-9]+}', 'EmailController@get');
+    $router->delete('{id:[0-9]+}', 'EmailController@delete');
+});

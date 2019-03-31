@@ -19,24 +19,25 @@ php:
   environment:
     APP_ENV: local
     APP_DEBUG: 'true'
-    APP_KEY: SomeRandomKey!!!
+    APP_KEY: base64:EmkJVfWpLcvHAEy4/W1BEJsQD8DKyj3rVZTz5XaoS/4=
     APP_LOCALE: en
     APP_FALLBACK_LOCALE: en
     DB_CONNECTION: mysql
     DB_HOST: db
     DB_DATABASE: lumen
     DB_USERNAME: lumen
-    DB_PASSWORD: secret
+    DB_PASSWORD: s1e2c3r4e5t6
     MEMCACHED_HOST: cache
     CACHE_DRIVER: memcached
 db:
   image: mysql
+  command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
   ports:
     - "3306:3306"
   environment:
-    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_ROOT_PASSWORD: t6e5r4c3e2s1
     MYSQL_DATABASE: lumen
     MYSQL_USER: lumen
-    MYSQL_PASSWORD: secret
+    MYSQL_PASSWORD: s1e2c3r4e5t6
 cache:
   image: memcached
