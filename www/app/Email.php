@@ -16,6 +16,9 @@ class Email extends Model
     const STATUS_FAILED = 'failed';
     const STATUS_QUEUED = 'queued';
 
+    const MAIL_PROVIDER_MAILJET = 'mailjet';
+    const MAIL_PROVIDER_SENDGRID = 'sendgrid';
+
     /**
      * @var string
      */
@@ -41,14 +44,14 @@ class Email extends Model
         return [
             'subject' => 'required|string|max:255',
             'content' => 'required',
-            'type' => 'required|in:' . implode(', ', self::mail_types()),
+            'type' => 'required|in:' . implode(', ', self::mailTypes()),
         ];
     }
 
     /**
      * @return array
      */
-    public static function mail_types()
+    public static function mailTypes()
     {
         return [
             self::TYPE_TEXT_PLAIN,
@@ -80,7 +83,7 @@ class Email extends Model
         ];
         if ($validator->fails()) {
             $errors = $validator->errors()->getMessages();
-            \Log::info('New records was not inserted! Next errors encountered: ' . json_encode($validator->errors()->getMessages()));
+            \Log::error('New records was not inserted! Next errors encountered: ' . json_encode($validator->errors()->getMessages()));
             $result['errors'] = $errors;
         } else {
             !is_array($data['to']) && $data['to'] = explode(',', $data['to']);
@@ -97,6 +100,17 @@ class Email extends Model
         }
 
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public static function mailProviders()
+    {
+        return [
+            self::MAIL_PROVIDER_MAILJET,
+            self::MAIL_PROVIDER_SENDGRID,
+        ];
     }
 
 }
