@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Jobs\ProcessEmail;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -78,7 +79,9 @@ class Email extends Model
             'errors' => [],
         ];
         if ($validator->fails()) {
-            $result['errors'] = $validator->errors()->getMessages();
+            $errors = $validator->errors()->getMessages();
+            \Log::info('New records was not inserted! Next errors encountered: ' . json_encode($validator->errors()->getMessages()));
+            $result['errors'] = $errors;
         } else {
             !is_array($data['to']) && $data['to'] = explode(',', $data['to']);
             $email = new self();
@@ -89,6 +92,8 @@ class Email extends Model
                 $email->save();
                 $result['results'][] = $email->id;
             }
+            \Log::info('Successfully inserted new record into email table');
+            dispatch(new ProcessEmail($email));
         }
 
         return $result;
