@@ -68,13 +68,15 @@ class Email extends Model
     {
         $rules = self::rules();
 
-        if (isset($data['to']) && is_array($data['to'])) {
+        !is_array($data['to']) &&  $data['to'] = explode(',', $data['to']);
+        if (!empty($data['to'])) {
             foreach ($data['to'] as $key => $val) {
                 $rules['to.'.$key] = 'email|max:255';
             }
         } else {
-            $rules['to'] = 'email|required';
+            $rules['to'] = 'required';
         }
+
         $validator = \validator($data, $rules);
 
         $result = [
@@ -86,17 +88,16 @@ class Email extends Model
             \Log::error('New records was not inserted! Next errors encountered: ' . json_encode($validator->errors()->getMessages()));
             $result['errors'] = $errors;
         } else {
-            !is_array($data['to']) && $data['to'] = explode(',', $data['to']);
-            $email = new self();
             foreach ($data['to'] as $to) {
+                $email = new self();
                 $email->fill($data);
                 $email->to = $to;
                 $email->status = self::STATUS_QUEUED;
                 $email->save();
                 $result['results'][] = $email->id;
+                dispatch(new ProcessEmail($email));
+                \Log::info('Successfully inserted new record into email table');
             }
-            \Log::info('Successfully inserted new record into email table');
-            dispatch(new ProcessEmail($email));
         }
 
         return $result;

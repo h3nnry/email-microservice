@@ -49,3 +49,5 @@ include the repositories url.
 ● Build & Run (docker-compose up --build -d)
 ● Move to www directory and install required packages(composer install)
 ● Move to www directory and run: php artisan migrate:fresh && php artisan queue:work --tries=6 (There are set 2 Email Providers, second as fallback, for each provider there are 3 tries, in total 6 tries)
+● For sending email from console use command php artisan email:send with specified arguments.
+● For sending email through api use post request to endpoind /email with specified arguments.
