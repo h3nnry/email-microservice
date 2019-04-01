@@ -16,7 +16,7 @@ class SendEmail extends Command
     . '{to : email recipient, for multiple separate by ","} '
     . '{content :  email content} '
     . '{subject : email subject} '
-    . '{type : email type, } available options: "text/plain", "text/markdown", "text/html"';
+    . '{type : email type, available options: "text/plain", "text/markdown", "text/html"}';
 
     /**
      * The console command description.
