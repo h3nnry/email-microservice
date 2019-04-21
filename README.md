@@ -1,4 +1,4 @@
-#Transactional email microservice - code challenge
+# Transactional email microservice - code challenge
 Description
 To streamline all transactional emails within Takeaway we want a transactional email
 microservice. This service should make sure transactional emails are sent with a high degree of
@@ -34,7 +34,7 @@ delivered)
 
 Out of scope
 Don't worry about the authentication/authorization for this microservice for now.
-##Required techniques:
+## Required techniques:
 - Docker
 - PHP
 - MySQL (or any other data storage)
