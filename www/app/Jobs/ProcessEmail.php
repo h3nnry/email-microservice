@@ -3,10 +3,16 @@
 namespace App\Jobs;
 
 use App\Email;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use \Mailjet\Resources;
 
-class ProcessEmail extends Job
+class ProcessEmail implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /** @var Email */
     private $email;
@@ -18,8 +24,11 @@ class ProcessEmail extends Job
     private $maxAttempts = 3;
 
     /**
-     * ProcessUserMail constructor.
+     * Create a new job instance.
+     *
      * @param Email $email
+     *
+     * @return void
      */
     public function __construct(Email $email)
     {
@@ -34,15 +43,13 @@ class ProcessEmail extends Job
      */
     public function handle()
     {
-
         \Log::info('New email job: ' . $this->email);
 
         if (empty($this->mailProviders)) {
-            \Log::info('No email providers set');
+            Log::info('No email providers set');
         }
 
         $this->sendEmail();
-
     }
 
     /**
@@ -157,11 +164,16 @@ class ProcessEmail extends Job
                 $this->email->status = Email::STATUS_SENT;
                 $this->email->save();
                 return true;
-            } catch (Exception $e) {
-                \Log::info($e->getMessage());
+            } catch (\Exception $exception) {
+                \Log::info($exception->getMessage());
                 $this->email->save();
             }
         }
         return false;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

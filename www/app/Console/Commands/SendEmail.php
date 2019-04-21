@@ -2,11 +2,21 @@
 
 namespace App\Console\Commands;
 
+use App\Repositories\EmailRepository;
 use App\Email;
+use App\Jobs\ProcessEmail;
+use App\Http\Requests\EmailRequest;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 
+/**
+ * Class SendEmail
+ * @package App\Console\Commands
+ */
 class SendEmail extends Command
 {
+    private $emailRepository;
     /**
      * The name and signature of the console command.
      *
@@ -30,8 +40,9 @@ class SendEmail extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(EmailRepository $emailRepository)
     {
+        $this->emailRepository = $emailRepository;
         parent::__construct();
     }
 
@@ -42,13 +53,23 @@ class SendEmail extends Command
      */
     public function handle()
     {
-
         try {
-            $results = Email::createNew($this->arguments());
-            if (!empty($results['errors'])) {
-                $this->info(json_encode($results['errors']));
+            $arguments = $this->arguments();
+            $validator = Validator::make($arguments, (new EmailRequest)->rules());
+            if ($validator->fails()) {
+                $this->info(json_encode($validator->errors()));
             } else {
-                $this->info('Emails with ids: ' . implode(', ', $results['results']) . ' expecting to be sent.');
+                $saveData = Arr::only($arguments, ['subject', 'content', 'type']);
+                $saveData['status'] = Email::STATUS_QUEUED;
+                $receivers = explode(',', $arguments['to']);
+                $result = [];
+                foreach ($receivers as $to) {
+                    $saveData['to'] = $to;
+                    $email = $this->emailRepository->create($saveData);
+                    $result[] = $email->id;
+                    dispatch(new ProcessEmail($email));
+                }
+                $this->info('Emails with ids: ' . implode(', ', $result) . ' expecting to be sent.');
             }
         } catch (Exception $exception) {
             $this->error($exception->getMessage());

@@ -22,32 +22,32 @@ Make sure;
 Important: we'll only have Docker running on our machines and should not have to install any
 additional software to get this micro-service running.
 Bonus points
-● Create a VueJS application
-○ which allows us to send an email (using this service)
-○ which allows us to see all the emails with their status (e.g. queued, bounced,
+- Create a VueJS application
+  - which allows us to send an email (using this service)
+  - which allows us to see all the emails with their status (e.g. queued, bounced,
 delivered)
-● Allow multiple mail formats
-○ HTML
-○ Markdown
-○ Text
-● Allow more recipients
+- Allow multiple mail formats
+  - HTML
+  - Markdown
+  - Text
+- Allow more recipients
 
 Out of scope
 Don't worry about the authentication/authorization for this microservice for now.
 ##Required techniques:
-● Docker
-● PHP
-● MySQL (or any other data storage)
+- Docker
+- PHP
+- MySQL (or any other data storage)
 Preferred techniques:
-● Laravel/Lumen
-● VueJS
+- Laravel/Lumen
+- VueJS
 Done?
 Push all the micro-commits to a Github repository and share this with one of our recruiters and
 include the repositories url.
 
 ## Project setup
-● Build & Run (docker-compose up --build -d)
-● Move to www directory and install required packages(composer install)
-● Move to www directory and run: php artisan migrate:fresh && php artisan queue:work --tries=6 (There are set 2 Email Providers, second as fallback, for each provider there are 3 tries, in total 6 tries)
-● For sending email from console use command php artisan email:send with specified arguments.
-● For sending email through api use post request to endpoind /email with specified arguments.
+- Build & Run (docker-compose up --build -d)
+- Move to www directory and install required packages(composer install)
+- Move to www directory and run: php artisan migrate:fresh && php artisan queue:work --tries=6 (There are set 2 Email Providers, second as fallback, for each provider there are 3 tries, in total 6 tries)
+- For sending email from console use command php artisan email:send with specified arguments.
+- For sending email through api use post request to endpoind /email with specified arguments.
