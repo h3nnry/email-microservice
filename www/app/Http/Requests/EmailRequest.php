@@ -44,7 +44,7 @@ class EmailRequest extends FormRequest
         return [
             'subject' => 'required|string|max:255',
             'content' => 'required',
-            'type' => 'required|in:' . implode(', ', Email::mailTypes()),
+            'type' => 'required|in:' . implode(',', Email::mailTypes()),
             'to.*' => 'required|email'
         ];
     }
